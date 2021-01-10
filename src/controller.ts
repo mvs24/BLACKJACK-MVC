@@ -82,8 +82,11 @@ const generateRandomIndex = () => {
   return Math.floor(Math.random() * state.availableCards.length);
 };
 
-const generateRandomCard = (): Card =>
-  state.availableCards[generateRandomIndex()];
+const generateRandomCard = (): Card => {
+  const randomIndex = generateRandomIndex();
+  state.availableCards.splice(randomIndex, 1);
+  return state.availableCards[randomIndex];
+};
 
 const getShuffledIndexes = () => {
   const shuffledIndexes: number[] = [];
@@ -152,6 +155,8 @@ const controlBlackJack = (sum: number, winner: string) => {
 const hitController = () => {
   const card = generateRandomCard();
 
+  console.log(state.availableCards);
+
   if (state.turn === "you") {
     state.you.push(card);
     cardView.renderCard(card, state.turn);
@@ -213,6 +218,10 @@ elements.hit!.addEventListener("click", () => {
   if (canPlay()) hitController();
 });
 elements.stand?.addEventListener("click", () => {
-  if (canPlay()) standController();
+  if (canPlay()) {
+    if (state[state.turn].length === 0) return;
+
+    standController();
+  }
 });
 elements.deal?.addEventListener("click", () => location.reload());
